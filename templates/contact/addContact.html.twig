@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un contact{% endblock %}
+
+{% block body %}
+    <section class="container">
+        <div class="row">
+        <h1>Ajouter un contact </h1>
+
+        <h3>Vos contact actuel :</h3>
+    <table border="1">
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Adresse</th>
+        </tr>
+        {% for contact in contacts %}
+        <tr>
+            <td>{{ contact.nom }}</td>
+            <td>{{ contact.prenom }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.adresse }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="mt-3">
+        <p class="text-danger">Fonctionnalité pas encore implémenté</p>
+        <form class="mb-3" action="{{ path('contact') }}" method="post">
+            <button type="submit" name="telecharger" value="1">Télécharger fichier CSV</button>
+        </form>
+        <button id="ajouter_contact">Ajouter le contact</button>
+        <script>
+        document.getElementById("ajouter_contact").addEventListener("click", function() {
+            // Redirection vers la page d'accueil
+            window.location.href = "{{ path('main') }}"; // Assurez-vous de remplacer 'app_homepage' par le nom de la route de votre page d'accueil
+        });
+        </script>
+    </div>
+
+{% endblock %}

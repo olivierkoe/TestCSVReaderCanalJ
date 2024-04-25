@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un contact{% endblock %}
+
+{% block body %}
+    <section class="container">
+        <div class="row">
+        <h1>Vos contact : </h1>
+    <table border="1">
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Adresse</th>
+        </tr>
+        {% for contact in contacts %}
+        <tr>
+            <td>{{ contact.nom }}</td>
+            <td>{{ contact.prenom }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.adresse }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button id="ajouter_contact">Ajouter un contact</button>
+        <script>
+        document.getElementById("ajouter_contact").addEventListener("click", function() {
+            // Redirection vers la page d'accueil
+            window.location.href = "{{ path('addContact') }}";
+        });
+    </script>
+
+{% endblock %}
