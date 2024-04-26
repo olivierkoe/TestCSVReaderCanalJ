@@ -29,5 +29,19 @@
             window.location.href = "{{ path('addContact') }}";
         });
     </script>
+        {% if app.flashes('success') is not empty %}
+            <div class="alert alert-success">
+                {% for message in app.flashes('success') %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+                {% endif %}
+                {% if app.flashes('success') is not empty %}
+            <div class="alert alert-success">
+                {% for message in app.flashes('success') %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
 
 {% endblock %}

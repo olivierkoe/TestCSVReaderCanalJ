@@ -7,7 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ContactType extends AbstractType
+class AddContactType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -16,7 +16,7 @@ class ContactType extends AbstractType
             ->add('prenom')
             ->add('email')
             ->add('adresse')
-            ;
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
