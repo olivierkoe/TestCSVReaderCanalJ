@@ -10,6 +10,7 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        # public: false
         bind:
             # string $uploadDirectory: '%kernel.project_dir%/src/import/'
             string $dataDirectory: '%kernel.project_dir%/public/data/'

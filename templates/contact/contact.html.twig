@@ -22,26 +22,24 @@
         </tr>
         {% endfor %}
     </table>
-    <button id="ajouter_contact">Ajouter un contact</button>
-        <script>
-        document.getElementById("ajouter_contact").addEventListener("click", function() {
-            // Redirection vers la page d'accueil
+    <div class="mt-5 text-center">
+    
+        <button class="" id="updateContact"  type="submit">Modifier un contact</button>
+        <button class="m-5" id="deleteContact" type="submit">Supprimer un contact</button>
+        <button class="" id="addContact"type="submit">Ajouter un contact</button>
+    </div>
+
+     <script>
+        document.getElementById("updateContact").addEventListener("click", function() {
+            // Redirection vers la page de création de contact
+            window.location.href = "{{ path('updateContact') }}";
+        });
+    </script>
+         <script>
+        document.getElementById("addContact").addEventListener("click", function() {
+            // Redirection vers la page de création de contact
             window.location.href = "{{ path('addContact') }}";
         });
     </script>
-        {% if app.flashes('success') is not empty %}
-            <div class="alert alert-success">
-                {% for message in app.flashes('success') %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-                {% endif %}
-                {% if app.flashes('success') is not empty %}
-            <div class="alert alert-success">
-                {% for message in app.flashes('success') %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
 
 {% endblock %}

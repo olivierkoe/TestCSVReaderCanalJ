@@ -129,6 +129,8 @@ class CreateContactsFromCsvFileCommand extends Command
                         $this->entityManager->persist($contact);
                         $contactsCreated++;
                     }
+
+
                     $this->entityManager->flush();
                 }
             }

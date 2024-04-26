@@ -4,71 +4,142 @@ namespace App\Service;
 
 use App\Entity\Contact;
 use App\Repository\ContactRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\ConsoleLeague\Csv;
-use League\Csv\Reader;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\YamlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class ImportContactsService
+#[AsCommand(
+    name: 'Create-Contacts-From-Csv-File',
+    description: 'Add a short description for your command',
+)]
+class ImportContactsService extends Command
 {
+    private EntityManagerInterface $entityManager;
+
+
+    private string $dataDirectory;
+
+    private SymfonyStyle $io;
+
+    private ContactRepository $contactRepository;
+
     public function __construct(
-        private ContactRepository $contactRepository,
-        private EntityManagerInterface $em
+        EntityManagerInterface $entityManager,
+        string $dataDirectory,
+        ContactRepository $contactRepository
     ) {
+        parent::__construct();
+        $this->dataDirectory = $dataDirectory;
+        $this->entityManager = $entityManager;
+        $this->contactRepository = $contactRepository;
     }
 
-    public function ImportContacts(SymfonyStyle $io): void
+    //
+    protected static $defaultName = 'app:create-contacts-from-file';
+
+    protected function configure(): void
     {
-        $io->title('Importation des contacts SERVICES');
+        $this->setDescription('Importer des donner CSV');
+    }
 
-        $contacts = $this->readCsvFile();
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->io = new SymfonyStyle($input, $output);
+    }
 
-        // $io->progressStart(count($contacts));
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->createContactsCSV();
 
-        foreach ($contacts as $key => $arraycontact) {
-            var_dump($contacts);
-            // var_dump('dans premier foreach');
-            // dd($arraycontact);
+        return Command::SUCCESS;
+    }
 
-            // $io->progressAdvance();
+    private function getDataFromFile(): array
+    {
+        $file = $this->dataDirectory . 'contact.csv';
 
-            foreach ($arraycontact as $value) {
-                var_dump('dans second foreach');
-                var_dump($value);
-                // dd($value);
-                exit;
-            }
-            // $contact = $this->createOrUpdateContact($arraycontact);
-            // $this->em->persist($contact);
+        $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
 
-            // $io->writeln($contact['nom']);
+        $normalizers = [new ObjectNormalizer()];
+
+        $encoders = [
+            new CsvEncoder(),
+            new XmlEncoder(),
+            new YamlEncoder()
+        ];
+
+        $serializer = new Serializer($normalizers, $encoders);
+
+        /** @var string  $fileString */
+        $fileString = file_get_contents($file);
+
+        $data = $serializer->decode($fileString, $fileExtension);
+
+        if (array_key_exists('nom;prenom;email;adresse', $data)) {
+            return $data['nom;prenom;email;adresse'];
         }
-        // $this->em->flush();
-        // $io->progressFinish();
-        // $io->success('Importation terminée');
+        return $data;
     }
 
-    private function readCsvFile(): Reader
+    private function createContactsCSV(): void
     {
-        $csv = Reader::createFromPath('./public/datas/contact.csv', 'r');
+        $this->io->section('CREATION DES UTILISATEURS A PARTIR DU FICHIER');
 
-        $csv->setHeaderOffset(0);
+        $contactsCreated = 0;
+        $contactsData = [];
+        foreach ($this->getDataFromFile() as $key => $row) {
+            // Données CSV
+            $csvData = $row;
 
-        return $csv;
+            // Initialisation du tableau associatif
+            $csvArray = [];
+
+            foreach ($csvData as $header => $line) {
+                // Séparer les données en utilisant le point-virgule comme délimiteur
+                $fields = explode(';', $line);
+
+                // Séparer les champs et les clés
+                $keys = explode(';', $header);
+
+                $EmailKey = $keys[2];
+                $contactPrenom = $fields[0];;
+                $contactNom = $fields[1];
+                $contactEmail = $fields[2];
+                $contactAdresse = $fields[3];
+
+                $existingContact = $this->contactRepository->findOneByEmail($contactEmail);
+
+                if ($EmailKey === "email" && empty($existingContact)) {
+
+                    if (!$csvArray) {
+                        $contact = new Contact();
+                        $contact->setEmail($contactEmail)
+                            ->setNom($contactNom)
+                            ->setPrenom($contactPrenom)
+                            ->setAdresse($contactAdresse);
+
+                        $this->entityManager->persist($contact);
+                        $contactsCreated++;
+                    }
+                    $this->entityManager->flush();
+                }
+            }
+        }
+        if ($contactsCreated > 1) {
+            $string = "{$contactsCreated} Utilisateurs ajoutées à la Base De Données.";
+        } elseif ($contactsCreated === 1) {
+            $string = '1 Contact à été ajoutéer en Base De Données.';
+        } else {
+            $string = 'Aucun contact ajoutées.';
+        }
+        $this->io->success($string);
     }
-
-    // private function createOrUpdateContact(array $arraycontact): Contact
-    // {
-    //     $contact = $this->contactRepository->findOneBy(['email' => $arraycontact['email']]);
-    //     if (!$contact) {
-    //         $contact = new Contact();
-    //     }
-    //     $contact->setEmail($arraycontact['email'])
-    //         ->setAdresse($arraycontact['adresse'])
-    //         ->setNom($arraycontact['nom'])
-    //         ->setPrenom($arraycontact['prenom']);
-
-    //     return $contact;
-    // }
 }
