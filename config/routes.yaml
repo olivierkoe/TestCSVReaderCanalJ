@@ -30,7 +30,7 @@ telecharger_csv:
     controller: 'App\Controller\ContactController::telechargerCSV'
     methods: ['GET', 'POST']
 
-add_contacts_from_csv:
-    path: /add-contacts-from-csv
-    controller: App\Controller\ContactController::addContactsFromCSV
-    methods: [POST]
+add_all_contacts:
+    path: /add-all-contacts
+    controller: 'App\Controller\ContactController::addAllContacts'
+    methods: ['POST']

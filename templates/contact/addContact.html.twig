@@ -10,6 +10,8 @@
             <div class="mt-3">
                 <!-- Utilisez un formulaire pour envoyer les données au serveur -->
                 <form class="mb-3" action="{{ path('telecharger_csv') }}" method="post">
+                <!-- Utilisez un champ de type "file" pour permettre à l'utilisateur de choisir un fichier -->
+                    <input type="file" name="csvFile" id="csvFile" accept=".csv">
                     <!-- Utilisez un bouton de type submit pour envoyer le formulaire -->
                     <button type="submit" class="mb-3">Télécharger fichier CSV</button>
                 </form>
