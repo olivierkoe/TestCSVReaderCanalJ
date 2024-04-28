@@ -24,22 +24,20 @@
     </table>
     <div class="mt-5 text-center">
     
-        <button class="" id="updateContact"  type="submit">Modifier un contact</button>
-        <button class="m-5" id="deleteContact" type="submit">Supprimer un contact</button>
-        <button class="" id="addContact"type="submit">Ajouter un contact</button>
-    </div>
+        <button class="m-3" id="updateContact"  type="submit">Modifier un contact</button>
 
+        <button class="m-3" id="addContact"type="submit">Ajouter un contact</button>
+    </div>
      <script>
         document.getElementById("updateContact").addEventListener("click", function() {
             // Redirection vers la page de création de contact
             window.location.href = "{{ path('updateContact') }}";
         });
     </script>
-         <script>
+    <script>
         document.getElementById("addContact").addEventListener("click", function() {
             // Redirection vers la page de création de contact
             window.location.href = "{{ path('addContact') }}";
         });
     </script>
-
 {% endblock %}

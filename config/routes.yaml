@@ -4,6 +4,33 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+# update_contact:
+#     path: /contact/{id}/update
+#     controller: 'App\Controller\ContactController::updateContact'
+
+contact_csv:
+    path: /contactCSV
+    controller: 'App\Controller\ContactController::afficherCSV'
+
 update_contact:
-    path: /contact/{id}/update
-    controller: 'App\Controller\ContactController::updateContact'
+    path: '/contact/update/{id}'
+    controller: 'App\Controller\ContactController@update'
+
+updateContactValidation:
+    path: /updateContactValidation
+    controller: App\Controller\ContactController::updateContactValidation
+    methods: [POST]
+
+deleteContact:
+    path: '/contact/delete/{id}'
+    controller: 'App\Controller\ContactController::deleteContact'
+
+telecharger_csv:
+    path: /telecharger-csv
+    controller: 'App\Controller\ContactController::telechargerCSV'
+    methods: ['GET', 'POST']
+
+add_contacts_from_csv:
+    path: /add-contacts-from-csv
+    controller: App\Controller\ContactController::addContactsFromCSV
+    methods: [POST]

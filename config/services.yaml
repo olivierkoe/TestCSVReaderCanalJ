@@ -4,9 +4,17 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-        fileUpload_dir: '%kernel.project_dir%/src/import/'
+        fileUpload_dir: '%kernel.project_dir%/src/public/data/'
 services:
     # default configuration for services in *this* file
+    App\Service\ImportContactsService:
+        class: App\Service\ImportContactsService
+        autowire: true
+        # arguments:
+        #         $templating: '@twig'
+
+
+
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
@@ -14,6 +22,8 @@ services:
         bind:
             # string $uploadDirectory: '%kernel.project_dir%/src/import/'
             string $dataDirectory: '%kernel.project_dir%/public/data/'
+
+    # Symfony\Component\Templating\EngineInterface: '@twig'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -26,3 +36,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\ContactsService:
+        arguments:
+            $projectDir: '%kernel.project_dir%/public/data/'

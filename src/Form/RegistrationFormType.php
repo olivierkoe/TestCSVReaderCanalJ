@@ -43,12 +43,6 @@ class RegistrationFormType extends AbstractType
                 ],
                 'label' => 'Adresse'
             ])
-            ->add('telephone', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control'
-                ],
-                'label' => 'Numéro de téléphone'
-            ])
             ->add('RGPDConsent', CheckboxType::class, [
                 'mapped' => false,
 

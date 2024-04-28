@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un contact{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Modifier un contact</h1>
+        
+
+
+<fieldset class="mb-3">
+    <legend class="mb-3">Vos contact</legend>
+ <table border="1">
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Adresse</th>
+        </tr>
+        {% for contact in contacts %}
+        <tr>
+            <td>{{ contact.nom }}</td>
+            <td>{{ contact.prenom }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.adresse }}</td>
+        </tr>
+        {% endfor %}
+            <legend class="mb-3">Les contacts du fichier csv</legend>
+                {% for contact in fichierCSV %}
+        <tr>
+            <td>{{ contact.nom }}</td>
+            <td>{{ contact.prenom }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.adresse }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+                <legend class="mb-3">Les contacts du fichier csv</legend>
+     <table border="1">
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Adresse</th>
+        </tr>
+
+                {% for contact in fichierCSV %}
+        <tr>
+            <td>{{ contact.nom }}</td>
+            <td>{{ contact.prenom }}</td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.adresse }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="mt-3">
+        <a href="{{ path('contact_csv') }}" target="_blank">Ajouter les contacts du fichier CSV</a>
+    </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById("updateContact").addEventListener("click", function(event) {
+                    event.preventDefault(); // Empêche la soumission par défaut du formulaire
+                    
+                    // Récupère la valeur de l'email depuis le champ de sélection
+                    var email = document.getElementById("email").options[document.getElementById("email").selectedIndex].value;
+                    
+                    // Redirige vers la page de mise à jour du contact avec l'email comme paramètre
+                    window.location.href = "{{ path('updateContact') }}?email=" + encodeURIComponent(email);
+                });
+
+                document.getElementById("telechargerCSV").addEventListener("click", function(event) {
+                    event.preventDefault(); // Empêche la soumission par défaut du formulaire
+                    
+                    // Récupère la valeur de l'email depuis le champ de sélection
+                    var email = document.getElementById("email").options[document.getElementById("email").selectedIndex].value;
+                    
+                    // Redirige vers la page de mise à jour du contact avec l'email comme paramètre
+                    window.location.href = "{{ path('updateContact') }}?email=" + encodeURIComponent(email);
+                });
+            });
+        </script>
+
+    </div>
+{% endblock %}

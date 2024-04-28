@@ -1,61 +1,108 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter un contact{% endblock %}
+{% block title %}Modifier un contact{% endblock %}
 
 {% block body %}
-<div>
-    <section class="container">
-        <div class="row">
-        <h1>Modifier un contact </h1>
-    </table>
-    <div class="mt-3">
+    <div class="container">
+        <h1>Modifier un contact</h1>
+        
+        {# Ajoute le menu déroulant des contacts #}
+        <label for="seletedEmail">Sélectionnez un contact :</label>
+        <select name="seletedEmail" id="seletedEmail">
+            {% for contact in contacts %}
+                <option value="{{ contact.id }}">{{ contact.email }}</option>
+            {% endfor %}
+        </select>
+
+        {# Affiche les détails du contact sélectionné dans des champs du formulaire #}
+        <form id="updateContactForm" action="{{ path('updateContactValidation') }}" method="POST">
+            <fieldset class="mb-3" id="contactDetails" style="display:none;">
+                <legend class="mb-3">Détails du contact sélectionné</legend>
+                 <div>
+                    <label for="nom">Id :</label>
+                    <input type="number" id="contactId" name="contactId">
+                </div>
+                <div>
+                    <label for="nom">Nom :</label>
+                    <input type="text" id="nom" name="nom">
+                </div>
+                <div>
+                    <label for="prenom">Prénom :</label>
+                    <input type="text" id="prenom" name="prenom">
+                </div>
+                <div>
+                    <label for="email">Email :</label>
+                    <input type="text" id="email" name="email">
+                </div>
+                <div>
+                    <label for="adresse">Adresse :</label>
+                    <input type="text" id="adresse" name="adresse">
+                </div>
+            </fieldset>
+            <button type="submit" class="mb-3" id="updateContactButton">Modifier le contact</button>
+            <button class="m-5" id="deleteContact" type="submit">Supprimer le contact</button>
+        </form>
+
         <script>
-        document.getElementById("ajouter_contact").addEventListener("click", function() {
-            // Redirection vers la page d'accueil
-            window.location.href = "{{ path('main') }}";
-        });
+            document.addEventListener("DOMContentLoaded", function() {
+                var nomField = document.getElementById("nom");
+                var prenomField = document.getElementById("prenom");
+                var adresseField = document.getElementById("adresse");
+                var emailField = document.getElementById("email");
+                var contactIdField = document.getElementById("contactId");
+                var contactDetails = document.getElementById("contactDetails");
+
+                document.getElementById("seletedEmail").addEventListener("change", function() {
+                    // Récupère la valeur de l'email sélectionné
+                    var selectedEmail = this.value;
+                    // Parcours tous les contacts pour trouver celui correspondant à l'email sélectionné
+                    {% for contact in contacts %}
+                        if ("{{ contact.id }}" === selectedEmail) {
+                            // Affiche les détails du contact correspondant dans les champs du formulaire
+                            contactIdField.value = "{{ contact.id }}";
+                            nomField.value = "{{ contact.nom }}";
+                            adresseField.value = "{{ contact.adresse }}";
+                            prenomField.value = "{{ contact.prenom }}";
+                            emailField.value = "{{ contact.email }}";
+                            // Affiche le champ des détails du contact
+                            contactDetails.style.display = "block";
+                            return; // Sort de la boucle si le contact est trouvé
+                        }
+                    {% endfor %}
+                    // Cache le champ des détails du contact si aucun contact correspondant n'est trouvé
+                    contactDetails.style.display = "none";
+                });
+                                // Ajoute un gestionnaire d'événements au formulaire de suppression
+                document.getElementById("deleteContact").addEventListener("click", function() {
+                    var selectedId = document.getElementById("contactId").value;
+                    if (confirm("Voulez-vous vraiment supprimer ce contact ?")) {
+                        // Effectuer une requête AJAX pour supprimer le contact avec l'ID sélectionné
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                if (xhr.status === 200) {
+                                    // Succès : actualiser la page ou effectuer d'autres actions nécessaires
+                                    window.location.reload();
+                                } else {
+                                    // Gérer les erreurs ou afficher un message d'erreur à l'utilisateur
+                                    console.error("Erreur lors de la suppression du contact :", xhr.statusText);
+                                }
+                            }
+                        };
+                        xhr.open("DELETE", "/contact/delete/" + selectedId, true);
+                        xhr.send();
+                    }
+                });
+
+                // Ajoute un gestionnaire d'événements au formulaire
+                document.getElementById("updateContactForm").addEventListener("submit", function(event) {
+                    // Empêche la soumission par défaut du formulaire
+                    event.preventDefault();
+                    // Soumet le formulaire de mise à jour
+                    this.submit();
+                });
+                
+            });
         </script>
     </div>
-        {{ form_start(UpdateContact) }}
-
-            <fieldset class="mb-3">
-                <legend class="mb-3">Le nouveau contact</legend>
-                <table border="1">
-                 <tr> 
-                 {% if UpdateContact == null %}
-
-                 {% else %}
-                    <th>{{ form_row(UpdateContact.email) }} </th>
-                    <th>{{ form_row(UpdateContact.nom) }} </th>
-                    <th>{{ form_row(UpdateContact.adresse) }} </th>
-                    <th>{{ form_row(UpdateContact.prenom) }} </th>
-                {% endif %}
-                 </tr>
-                </table>
-            </fieldset>
-            <form class="mb-3" action="{{ path('contact') }}" method="POST">
-                <select name="email" id="email">
-                    {% for contact in contacts %}
-                        <option value="{{ contact.id }}"><p>{{ contact.id }} {{ contact.email }}</p></option>
-                    {% endfor %}
-                <button class="mb-3" type="submit" name="telecharger" id="" value="1">Télécharger fichier CSV</button>
-                <button type="submit" class="mb-3" id="updateContact">Modifier le contact</button>
-                </select>
-            </form>
-        {{ form_end(UpdateContact) }}
-    </div>
-<script>
-    // Écoute l'événement de soumission du formulaire
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Empêche la soumission par défaut du formulaire
-
-            // Récupère la valeur de l'email depuis le champ de formulaire
-            var email = document.getElementById("email").value;
-
-            // Redirige vers la page de mise à jour du contact avec l'email comme paramètre
-             window.location.href = "{{ path('updateContact') }}?email=" + encodeURIComponent(email);
-        });
-    });
-</script>
 {% endblock %}
