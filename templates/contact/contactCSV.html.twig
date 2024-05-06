@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container">
         <h1>Modifier un contact</h1>
-        
+
 
 
 <fieldset class="mb-3">
@@ -35,24 +35,18 @@
         </tr>
         {% endfor %}
     </table>
-                <legend class="mb-3">Les contacts du fichier csv</legend>
-     <table border="1">
-        <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Adresse</th>
-        </tr>
 
+                <legend class="mb-3">Les contacts du fichier csv</legend>
                 {% for contact in fichierCSV %}
-        <tr>
-            <td>{{ contact.nom }}</td>
-            <td>{{ contact.prenom }}</td>
-            <td>{{ contact.email }}</td>
-            <td>{{ contact.adresse }}</td>
-        </tr>
+        <div>
+        <label>{{contact.nom}} {{contact.prenom}}</label>
+            <div> Email : {{ contact.email }} </div>
+            <div> Adresse : {{ contact.adresse }} </div>
+            <div>Select : <input type="checkbox" id="horns" name="horns" /> </div>
+                <hr>
+        </div>
         {% endfor %}
-    </table>
+
             <form class="mb-3" action="{{ path('contact') }}" method="post" enctype="multipart/form-data">
                 <button type="submit" class="mb-3" id="ajouter_contact">Ajouter les contact</button>
             </form>
@@ -70,17 +64,17 @@
 
                 document.getElementById("telechargerCSV").addEventListener("click", function(event) {
                     event.preventDefault(); // Empêche la soumission par défaut du formulaire
-                    
+
                     // Récupère la valeur de l'email depuis le champ de sélection
                     var email = document.getElementById("email").options[document.getElementById("email").selectedIndex].value;
-                    
+
                     // Redirige vers la page de mise à jour du contact avec l'email comme paramètre
                     window.location.href = "{{ path('updateContact') }}?email=" + encodeURIComponent(email);
                 });
                             // Redirection vers la page des contacts lorsque le formulaire est soumis avec succès
             document.addEventListener("DOMContentLoaded", function () {
                 document.querySelector('form').addEventListener('submit', function () {
-                    // Ici vous pouvez ajouter le code pour rediriger vers la page des contacts après soumission du formulaire
+
                 });
             });
             });
